@@ -1,0 +1,73 @@
+C51 COMPILER V9.60.7.0   WYSWIETLACZ_BCD                                                   12/22/2024 22:00:00 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE WYSWIETLACZ_BCD
+OBJECT MODULE PLACED IN .\Objects\wyswietlacz_bcd.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE wyswietlacz_bcd.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\w
+                    -yswietlacz_bcd.lst) TABS(2) OBJECT(.\Objects\wyswietlacz_bcd.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          void serialInterrupt(void) interrupt 4
+   4          {
+   5   1          if(RI == 1)
+   6   1          {
+   7   2              RI = 0;
+   8   2              // Odczytujemy otrzymany bajt:
+   9   2              if(SBUF == 0x01)
+  10   2              {
+  11   3                  // PIN byl poprawny
+  12   3                  P1 = 0x01;  // np. zapal diode na P1_0
+  13   3              }
+  14   2              else if(SBUF == 0x02)
+  15   2              {
+  16   3                  // PIN byl bledny
+  17   3                  P1 = 0x02;  // zapal diode na P1_1
+  18   3              }
+  19   2          }
+  20   1      }
+  21          
+  22          void main()
+  23          {
+  24   1          // Konfiguracja UART do odbioru (SM1=1, REN=1)
+  25   1          SCON = 0x50;  // 0101 0000 => SM1=1, REN=1
+  26   1          TH2 = 0xFF;
+  27   1          RCAP2H = 0xFF;
+  28   1          TL2 = 0xDC;
+  29   1          RCAP2L = 0xDC;
+  30   1          T2CON = 0x34; // Timer2 w trybie baud rate, TR2=1, RCLK=1, TCLK=0
+  31   1      
+  32   1          // Wlacz przerwanie od UART
+  33   1          ES = 1;
+  34   1          EA = 1;
+  35   1      
+  36   1          // Ustaw P1 na cokolwiek (np. 0x00) na start
+  37   1          P1 = 0x00;
+  38   1      
+  39   1          while(1)
+  40   1          {
+  41   2              // nic, czekamy na odbiór w przerwaniu
+  42   2          }
+  43   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     62    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   WYSWIETLACZ_BCD                                                   12/22/2024 22:00:00 PAGE 2   
+
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

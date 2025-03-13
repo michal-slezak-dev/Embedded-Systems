@@ -1,0 +1,300 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              11/19/2024 22:31:33 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\main.lst) TA
+                    -BS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          unsigned char xdata Lewy _at_ 0xFE00;
+   3          unsigned char xdata Prawy _at_ 0xFD00;
+   4          
+   5          unsigned char code Koder[] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39
+             -, 0x5E, 0x79, 0x71, 0x6F, 0x76, 0x30, 0x1E, 0x76, 0x38, 0x15, 0x54, 0x3F, 0x73, 0x67, 0x50, 0x6D, 0x78, 0x3E, 0x1C, 0x2A
+             -, 0x76, 0x66, 0x5B}; // 8 bitow czyli char, musi globalna byc, bbo w przerwaniu chce uzyc, mam dla 0 1 2 3, wiec potem d
+             -la kolejnych trzeba
+   6          
+   7          volatile unsigned char data ind1, ind2;
+   8          unsigned char automatTekst = 0;
+   9          unsigned char wlacz = 0;
+  10          unsigned char double_press = 0;
+  11          unsigned char podwojne = 0;
+  12          unsigned char stan = 0;
+  13          #define OD  25
+  14          #define DO  50
+  15          
+  16          // 0 malejaca, 1 rosnaca
+  17          #define ZLICZANIE_KIERUNEK 0
+  18            
+  19          char tekst[] = "MICHAL SLEZAK 18";
+  20          char rozmiarTekstu = sizeof(tekst);
+  21            
+  22          // i = 0 pierwszy znak
+  23          // i = 1 na lewym i prawym
+  24          unsigned int i = 0; 
+  25            
+  26          // odliczanie w dol
+  27          unsigned int j = OD;
+  28            
+  29          void sleep(unsigned char x, unsigned char y)
+  30          {
+  31   1        int i, j;
+  32   1        for(i = 0; i < x; i++)
+  33   1        {
+  34   2          for(j = 0; j < y; j++)
+  35   2          {;}
+  36   2        }
+  37   1      }
+  38            
+  39          void init(void)
+  40          {
+  41   1        
+  42   1        Lewy = 0x00;
+  43   1        Prawy = 0x00;
+  44   1        
+  45   1        EX0=1;   // wlaczam przerwania INT0
+  46   1        IT0=1;   // INT0 ma byc zboczem aktywowany
+  47   1        TMOD=0x20; // tryb 2 timera 1 -> mode 2 (8-bit auto-reload)
+  48   1        TH1=TL1=0x00; // defaultowe wartosci
+  49   1        ET1=1;   // wlaczam przerwania timera 1
+  50   1        TR1=1;   // zaczac dzialanie timera 1
+  51   1        
+C51 COMPILER V9.60.7.0   MAIN                                                              11/19/2024 22:31:33 PAGE 2   
+
+  52   1        TH1 = 0xF4;
+  53   1        EA=1;    // Enable global interrupts
+  54   1        
+  55   1      }
+  56            
+  57          void puste(unsigned char strona) {
+  58   1        if (strona == 1)      ind1 = 0x00;
+  59   1        else if (strona == 2) ind2 = 0x00;
+  60   1      }
+  61          
+  62          void wyswietlTekst(unsigned char znak, unsigned char strona_wys) {
+  63   1        
+  64   1        unsigned int ascii = znak;
+  65   1        switch (ascii) {
+  66   2          
+  67   2          
+  68   2          case 32: znak = 0x00;         break;
+  69   2          
+  70   2          case 48: znak = Koder[0];         break;
+  71   2          case 49: znak = Koder[1];         break;
+  72   2          case 50: znak = Koder[2];           break;
+  73   2          case 51: znak = Koder[3];         break;
+  74   2          case 52: znak = Koder[4];         break;
+  75   2          case 53: znak = Koder[5];           break;
+  76   2          case 54: znak = Koder[6];         break;
+  77   2          case 55: znak = Koder[7];         break;
+  78   2          case 56: znak = Koder[8];         break;
+  79   2          case 57: znak = Koder[9];     break;
+  80   2          
+  81   2          case 65: case 97:   znak = Koder[10]; break;
+  82   2          case 66: case 98:   znak = Koder[11]; break;
+  83   2          case 67: case 99:   znak = Koder[12]; break;
+  84   2          case 68: case 100:  znak = Koder[13]; break;
+  85   2          case 69: case 101:  znak = Koder[14]; break;
+  86   2          case 70: case 102:  znak = Koder[15]; break;
+  87   2          case 71: case 103:  znak = Koder[16]; break;
+  88   2          case 72: case 104:  znak = Koder[17]; break;
+  89   2          case 73: case 105:  znak = Koder[18]; break;
+  90   2          case 74: case 106:  znak = Koder[19]; break;
+  91   2          case 75: case 107:  znak = Koder[20]; break;
+  92   2          case 76: case 108:  znak = Koder[21]; break;
+  93   2          case 77: case 109:  znak = Koder[22]; break;
+  94   2          case 78: case 110:  znak = Koder[23]; break;
+  95   2          case 79: case 111:  znak = Koder[24]; break;
+  96   2          case 80: case 112:  znak = Koder[25]; break;
+  97   2          case 81: case 113:  znak = Koder[26]; break;
+  98   2          case 82: case 114:  znak = Koder[27]; break;
+  99   2          case 83: case 115:  znak = Koder[28]; break;
+ 100   2          case 84: case 116:  znak = Koder[29]; break;
+ 101   2          case 85: case 117:  znak = Koder[30]; break;
+ 102   2          case 86: case 118:  znak = Koder[31]; break;
+ 103   2          case 87: case 119:  znak = Koder[32]; break;
+ 104   2          case 88: case 120:  znak = Koder[33]; break;
+ 105   2          case 89: case 121:  znak = Koder[34]; break;
+ 106   2          case 90: case 122:  znak = Koder[35]; break;
+ 107   2      
+ 108   2          default: P1 = ascii;  break;
+ 109   2        }
+ 110   1        
+ 111   1        if (strona_wys == 1)      ind1 = znak;
+ 112   1        else if (strona_wys == 2) ind2 = znak;
+ 113   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              11/19/2024 22:31:33 PAGE 3   
+
+ 114          
+ 115          void numeryWyswietl(unsigned int n, int baza) {
+ 116   1        if(n < 10) {
+ 117   2          wyswietlTekst('0', 1);
+ 118   2          wyswietlTekst(n + 48, 2);
+ 119   2        } else {
+ 120   2          unsigned int reszta = n % baza;
+ 121   2          unsigned int dziesiatki = (n - reszta) / baza; 
+ 122   2          P1 = reszta;
+ 123   2          wyswietlTekst(dziesiatki + 48, 1);
+ 124   2          wyswietlTekst(reszta + 48, 2);
+ 125   2        }
+ 126   1      }
+ 127          
+ 128          void przyt_3s(void)
+ 129          {
+ 130   1          sleep(100, 100);
+ 131   1          if(P3_2==0)
+ 132   1              wlacz++;
+ 133   1      }
+ 134          void puszczenie(void)
+ 135          {
+ 136   1              while(1)
+ 137   1          {
+ 138   2              if(P3_2!=0)
+ 139   2              {
+ 140   3                      wlacz++;
+ 141   3                      break;
+ 142   3      
+ 143   3              }
+ 144   2      
+ 145   2          }
+ 146   1      }
+ 147          
+ 148          void podwojne_przycisniecie(void)
+ 149          {
+ 150   1          if (P3_2 == 0) // First press detected
+ 151   1          {
+ 152   2              sleep(50, 50); // Debounce delay
+ 153   2              if (P3_2 == 0) // Confirm press
+ 154   2              {
+ 155   3                  while (P3_2 == 0); // Wait for button release
+ 156   3                  
+ 157   3                  sleep(100, 100); // Time window for second press
+ 158   3      
+ 159   3                  if (P3_2 == 0) // Check for second press
+ 160   3                  {
+ 161   4                      sleep(50, 50); // Debounce delay
+ 162   4                      if (P3_2 == 0) // Confirm second press
+ 163   4                      {
+ 164   5                          while (P3_2 == 0); // Wait for button release
+ 165   5                          podwojne = 1; // Double press detected
+ 166   5                      }
+ 167   4                  }
+ 168   3              }
+ 169   2          }
+ 170   1      }
+ 171          
+ 172          void ISR_INT0(void) interrupt 0 // timer zerowy ma wyzszy priorytet
+ 173          {
+ 174   1        
+ 175   1          
+C51 COMPILER V9.60.7.0   MAIN                                                              11/19/2024 22:31:33 PAGE 4   
+
+ 176   1          //przyt_3s();
+ 177   1          //puszczenie();
+ 178   1          podwojne_przycisniecie();
+ 179   1          // wyswietlanie tekstu
+ 180   1          automatTekst = 1;
+ 181   1          // znak na prawo
+ 182   1          /*if(1) { // 1 dizala 
+ 183   1            wyswietlTekst(tekst[i % rozmiarTekstu], 1); // 2 to w prawo sie przewija, a jak 1 to w lewo
+ 184   1            if (i > 0) {
+ 185   1              // poprzedni znak na lewy
+ 186   1              wyswietlTekst(tekst[(i-1) % rozmiarTekstu], 2); // 1 to w prawo sie przewija, a jak 2 to w lewo
+ 187   1            } else {
+ 188   1              puste(1);
+ 189   1            }
+ 190   1            
+ 191   1            i++;
+ 192   1          }*/
+ 193   1          
+ 194   1        // rosnaco
+ 195   1        /*if(1) {
+ 196   1          // Forward
+ 197   1          if (ZLICZANIE_KIERUNEK == 1) {
+ 198   1            if (j <= DO) {
+ 199   1              numeryWyswietl(j, 10);
+ 200   1              j++;
+ 201   1            }
+ 202   1          } 
+ 203   1          // malejaca
+ 204   1          else {
+ 205   1            unsigned char obecna = DO - j + OD;
+ 206   1            if (obecna >= OD) {
+ 207   1              numeryWyswietl(obecna, 10);
+ 208   1              j++; 
+ 209   1            }
+ 210   1          }
+ 211   1        }*/
+ 212   1      }
+ 213          
+ 214          void automatycznyTekst()
+ 215          {
+ 216   1        
+ 217   1        while(1)
+ 218   1        {
+ 219   2          sleep(20, 20);
+ 220   2          wyswietlTekst(tekst[i % rozmiarTekstu], 2); // 2 to w prawo sie przewija, a jak 1 to w lewo
+ 221   2          //sleep();
+ 222   2          if (i > 0) {
+ 223   3            // poprzedni znak na lewy
+ 224   3            wyswietlTekst(tekst[(i-1) % rozmiarTekstu], 1); // 1 to w prawo sie przewija, a jak 2 to w lewo
+ 225   3          } else {
+ 226   3            puste(1);
+ 227   3          }
+ 228   2          
+ 229   2          i++;
+ 230   2        }
+ 231   1      }
+ 232          
+ 233          void BCD(void) interrupt 3 // timer 1 wyswietla
+ 234          {
+ 235   1        Lewy = ind1;
+ 236   1        Prawy = ind2; 
+ 237   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              11/19/2024 22:31:33 PAGE 5   
+
+ 238          
+ 239          void main(void)
+ 240          {
+ 241   1        init();
+ 242   1        while(1){
+ 243   2          //if(wlacz == 1)
+ 244   2          //{
+ 245   2          if(podwojne == 1)
+ 246   2          {
+ 247   3            if (automatTekst == 1)
+ 248   3            {
+ 249   4              automatycznyTekst();
+ 250   4              automatTekst = 0;
+ 251   4            }
+ 252   3            //podwojne = 0;
+ 253   3            //break;
+ 254   3          }
+ 255   2            //wlacz = 0;
+ 256   2            //break;
+ 257   2        //}
+ 258   2      
+ 259   2          
+ 260   2        }
+ 261   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    854    ----
+   CONSTANT SIZE    =     36    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     29       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,269 @@
+C51 COMPILER V9.60.7.0   BCD_PROJE                                                         01/02/2025 16:55:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE BCD_PROJE
+OBJECT MODULE PLACED IN .\Objects\bcd_proje.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE bcd_proje.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\bcd_pro
+                    -je.lst) TABS(2) OBJECT(.\Objects\bcd_proje.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          extern w50mS();
+   4          unsigned char data Var1, Var2, Var3;
+   5          
+   6          unsigned char xdata Ones _at_ 0xFD00;
+   7          unsigned char xdata Tens _at_ 0xFE00;
+   8          
+   9          unsigned char code Koder[] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39
+             -, 0x5E, 0x79, 0x71, 0x6F, 0x76, 0x30, 0x1E, 0x76, 0x38, 0x15, 0x54, 0x3F, 0x73, 0x67, 0x50, 0x6D, 0x78, 0x3E, 0x1C, 0x2A
+             -, 0x76, 0x66, 0x5B}; // 8 bitow czyli char, musi globalna byc, bbo w przerwaniu chce uzyc, mam dla 0 1 2 3, wiec potem d
+             -la kolejnych trzeba
+  10          
+  11          volatile unsigned char data segmentLeft;
+  12          volatile unsigned char data segmentRight;
+  13          unsigned char i = 0;
+  14            
+  15          bit isPressed = 0; // czy wcisniete
+  16          bit ringing = 0;
+  17          
+  18          char text[] = " NOWZD "; // ;-)
+  19          char textSize = sizeof(text);
+  20            
+  21          /* char textErr[] = "ER";
+  22          char textErrSize = sizeof(textErr);
+  23            
+  24          char textOk[] = "OK";
+  25          char textOkSize = sizeof(textOk); */
+  26          
+  27          void sleep()
+  28          {
+  29   1          int i, j;
+  30   1          for(i = 0; i < 70; i++)
+  31   1          {
+  32   2              for(j = 0; j < 70; j++)
+  33   2              {
+  34   3                  /* nic */;
+  35   3              }
+  36   2          }
+  37   1      }
+  38            
+  39          void blank_bcd(unsigned char side) {
+  40   1        if (side == 1)      segmentLeft = 0x00;
+  41   1        else if (side == 2) segmentRight = 0x00;
+  42   1      }
+  43          
+  44          void displayText(unsigned char character, unsigned char bcd_side) {
+  45   1        
+  46   1        unsigned int ascii = character;
+  47   1        switch (ascii) {
+  48   2          
+  49   2          
+  50   2          case 32: character = 0x00;          break;
+  51   2          
+C51 COMPILER V9.60.7.0   BCD_PROJE                                                         01/02/2025 16:55:06 PAGE 2   
+
+  52   2          case 48: character = Koder[0];          break;
+  53   2          case 49: character = Koder[1];          break;
+  54   2          case 50: character = Koder[2];          break;
+  55   2          case 51: character = Koder[3];          break;
+  56   2          case 52: character = Koder[4];        break;
+  57   2          case 53: character = Koder[5];          break;
+  58   2          case 54: character = Koder[6];          break;
+  59   2          case 55: character = Koder[7];        break;
+  60   2          case 56: character = Koder[8];        break;
+  61   2          case 57: character = Koder[9];      break;
+  62   2          
+  63   2          case 65: case 97:   character = Koder[10];  break;
+  64   2          case 66: case 98:   character = Koder[11];  break;
+  65   2          case 67: case 99:   character = Koder[12];  break;
+  66   2          case 68: case 100:  character = Koder[13];  break;
+  67   2          case 69: case 101:  character = Koder[14];  break;
+  68   2          case 70: case 102:  character = Koder[15];  break;
+  69   2          case 71: case 103:  character = Koder[16];  break;
+  70   2          case 72: case 104:  character = Koder[17];  break;
+  71   2          case 73: case 105:  character = Koder[18];  break;
+  72   2          case 74: case 106:  character = Koder[19];  break;
+  73   2          case 75: case 107:  character = Koder[20];  break;
+  74   2          case 76: case 108:  character = Koder[21];  break;
+  75   2          case 77: case 109:  character = Koder[22];  break;
+  76   2          case 78: case 110:  character = Koder[23];  break;
+  77   2          case 79: case 111:  character = Koder[24];  break;
+  78   2          case 80: case 112:  character = Koder[25];  break;
+  79   2          case 81: case 113:  character = Koder[26];  break;
+  80   2          case 82: case 114:  character = Koder[27];  break;
+  81   2          case 83: case 115:  character = Koder[28];  break;
+  82   2          case 84: case 116:  character = Koder[29];  break;
+  83   2          case 85: case 117:  character = Koder[30];  break;
+  84   2          case 86: case 118:  character = Koder[31];  break;
+  85   2          case 87: case 119:  character = Koder[32];  break;
+  86   2          case 88: case 120:  character = Koder[33];  break;
+  87   2          case 89: case 121:  character = Koder[34];  break;
+  88   2          case 90: case 122:  character = Koder[35];  break;
+  89   2      
+  90   2          default: P1 = ascii;  break;
+  91   2        }
+  92   1        
+  93   1        if (bcd_side == 1)      segmentLeft = character;
+  94   1        else if (bcd_side == 2) segmentRight = character;
+  95   1      }
+  96          bit correct = 0;
+  97          bit incorrect = 0;
+  98          unsigned char receivedByte;
+  99          void ISR_Serial(void) interrupt  4
+ 100          {
+ 101   1        if(TI == 1) {TI = 0;}
+ 102   1        if(RI == 1)
+ 103   1         {
+ 104   2           RI = 0;
+ 105   2           receivedByte = SBUF;
+ 106   2           sleep();
+ 107   2           if(receivedByte == '0') {correct = 1;}
+ 108   2           else if(receivedByte == '1') {incorrect = 1;}
+ 109   2           //IE1 = 1;
+ 110   2         }
+ 111   1          //RI = 1;
+ 112   1          //ringing = 1;
+ 113   1      }  
+C51 COMPILER V9.60.7.0   BCD_PROJE                                                         01/02/2025 16:55:06 PAGE 3   
+
+ 114          
+ 115          // button na przerwanie INT0
+ 116          void ISR_INT() interrupt 0
+ 117          {
+ 118   1        if(P3_2 == 0 && isPressed == 0)
+ 119   1        {
+ 120   2          ringing = 1;
+ 121   2          displayText(text[i], 1); 
+ 122   2          if (i > 0) {
+ 123   3            displayText(text[i-1], 2);
+ 124   3        } else {
+ 125   3            blank_bcd(1);
+ 126   3          }
+ 127   2          i++;
+ 128   2          
+ 129   2          if (i >= textSize) i = 0;
+ 130   2        }
+ 131   1        isPressed = P3_2;
+ 132   1      }
+ 133          
+ 134          
+ 135          // T1
+ 136          void ISR_T1() interrupt 3
+ 137          { 
+ 138   1        if(ringing == 1)
+ 139   1        {
+ 140   2          displayText(text[i], 1); 
+ 141   2          if (i > 0) {
+ 142   3            displayText(text[i-1], 2);
+ 143   3          } else {
+ 144   3            blank_bcd(1);
+ 145   3          }
+ 146   2          i++;
+ 147   2          
+ 148   2          if (i >= textSize) {i = 0; ringing = 0; blank_bcd(1);}
+ 149   2        }else
+ 150   1        {
+ 151   2          //blank_bcd(1);
+ 152   2          if(correct)
+ 153   2          {
+ 154   3            //sleep();
+ 155   3            //sleep_3sec();
+ 156   3            displayText('O', 1);
+ 157   3            displayText('K', 2);
+ 158   3            //sleep();
+ 159   3            //segmentLeft = Koder[0];
+ 160   3            P1_0 = 1;
+ 161   3            correct = 0;
+ 162   3            //sleep_longer();
+ 163   3            //blank_bcd(1);
+ 164   3            //blank_bcd(2);
+ 165   3          }/*else
+ 166   2          {
+ 167   2            //sleep_3sec();
+ 168   2            //blank_bcd(1);
+ 169   2            //blank_bcd(2);
+ 170   2          }*/
+ 171   2        
+ 172   2          if(incorrect)
+ 173   2          {
+ 174   3            //sleep();
+ 175   3            displayText('E', 1);
+C51 COMPILER V9.60.7.0   BCD_PROJE                                                         01/02/2025 16:55:06 PAGE 4   
+
+ 176   3            displayText('R', 2);
+ 177   3            //sleep();
+ 178   3            //segmentRight = Koder[1];
+ 179   3            P1_1 = 1;
+ 180   3            incorrect = 0;
+ 181   3            //sleep_longer();
+ 182   3            //blank_bcd(1);
+ 183   3            //blank_bcd(2);
+ 184   3          }/*else if(incorrect == 0 || correct == 0)
+ 185   2          {
+ 186   2            blank_bcd(1);
+ 187   2            blank_bcd(2);
+ 188   2          }*/
+ 189   2        }
+ 190   1      }
+ 191          
+ 192          void Init(void)
+ 193            {
+ 194   1          P3_4 = 0;
+ 195   1            
+ 196   1          SCON = 0x50;
+ 197   1          T2CON = 0x30;
+ 198   1          TH2 = RCAP2H = 0xFF;
+ 199   1          TL2 = RCAP2L = 0xDC;
+ 200   1          TR2=1;
+ 201   1          ES = 1;
+ 202   1          EA  = 1;
+ 203   1          
+ 204   1          
+ 205   1          EX0 = 1;  // zezwalam na przerwanie INT0
+ 206   1          IT0 = 1;  // przerwanie INT0 na zbocze opadajace
+ 207   1        
+ 208   1          // T1
+ 209   1          EX1 = 1;
+ 210   1          IT1 = 1;
+ 211   1          ET1 = 1;
+ 212   1          TR1 = 1; // uruchamiam w tryb pracy timera 1, bo normalnie stop
+ 213   1          TMOD = 0 | T1_M0_; 
+ 214   1        }
+ 215          
+ 216          void main(void)
+ 217          {
+ 218   1          Init();
+ 219   1          while (1) {
+ 220   2              /*if(correct == 0 && incorrect == 0)
+ 221   2              {
+ 222   2                sleep();
+ 223   2                blank_bcd(1);
+ 224   2                blank_bcd(2);
+ 225   2              }*/
+ 226   2              
+ 227   2              Tens = segmentLeft;
+ 228   2              Ones = segmentRight;
+ 229   2          }
+ 230   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    851    ----
+   CONSTANT SIZE    =     36    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   BCD_PROJE                                                         01/02/2025 16:55:06 PAGE 5   
+
+   DATA SIZE        =     16       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      4    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

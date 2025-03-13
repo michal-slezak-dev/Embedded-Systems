@@ -1,0 +1,6 @@
+".\Objects\bcd_proje.obj",
+".\Objects\wait1.obj" 
+TO ".\Objects\bcd_proj" 
+
+PRINT(".\Listings\bcd_proj.map") CLASSES (CODE (C:0x0-C:0x1FFF), CONST (C:0x0-C:0x1FFF), 
+ECODE (C:0x0-C:0x1FFF), HCONST (C:0x0-C:0x1FFF)) 

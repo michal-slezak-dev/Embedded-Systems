@@ -1,0 +1,92 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              11/18/2024 11:24:28 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\main.lst) TA
+                    -BS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          unsigned char xdata Lewy _at_ 0xFE00;   // pamiec zewnetrzna, wiec xdata
+   3          unsigned char xdata Prawy _at_ 0xFD00; // zawsze umieszczone w tym samym obszarze pamieci
+   4          
+   5          //data 13 bajtow pamieci uzylismy, czt wartosci w koder beda zmieniane ? nie! wiec w pamieci code!!!
+   6          unsigned char code Koder[] = {0x3F, 0x06, 0x5B, 0x4F}; // 8 bitow czyli char, musi globalna byc, bbo w prz
+             -erwaniu chce uzyc, mam dla 0 1 2 3, wiec potem dla kolejnych trzeba
+   7          // pamiec kodu jest typu flash
+   8          volatile unsigned char data ind1, ind2; // bo w obsludze przerwania, po to ze jak wejde lewy prawy to ind1
+             - i ind2 beda juz zainicjowane
+   9          // volatile bierze nowsza ze stosu ?
+  10          void init(void)
+  11          {
+  12   1        
+  13   1        P3_4 = 0;
+  14   1        ind1 = 0;
+  15   1        ind2 = 0;
+  16   1        TCON = 0x00;
+  17   1        TMOD = 0X20;
+  18   1        TH1 = 0x00;
+  19   1        ET1 = 1; // enable timer 1, wlaczylem przerwania od timera, jesli wlaczylem przerwania to musze miec funk
+             -cje obslugi zrobiona, np. BCD
+  20   1        // musze jeszcze skonfigutowac timer
+  21   1        
+  22   1        IT0 =1;
+  23   1        EX0 = 1; // obsluga przelacznika
+  24   1        
+  25   1        // na koncu
+  26   1        EA = 1;
+  27   1        TR1 = 1; // bo mielismy w trybie stop a chcemy, zeby dzialal, laga od timera gasi sie sama w momencie wyj
+             -scia z procedury obslugi przerwania
+  28   1      }
+  29          
+  30          void BCD(void) interrupt 3 // timer 1
+  31          {
+  32   1        Lewy = Koder[ind1]; //  00111111 dp g f e d c b a, jesli chce 0 to dp 0(zgaszony)0, 1111...i na hexa zami
+             -eniam
+  33   1        Prawy = Koder[ind2]; 
+  34   1      }
+  35          
+  36          void Licznik(void) interrupt 0 // zerowy ma wyzszy priorytet
+  37          {
+  38   1        
+  39   1        ind2++;
+  40   1        if(ind2 == 4) // doszedlem do konca zliczania
+  41   1        {
+  42   2          ind2 = 0;
+  43   2          ind1++;
+  44   2          if(ind1 == 4)
+  45   2          {
+  46   3            ind1 = 0;
+  47   3          }
+  48   2        }
+  49   1        Lewy = Koder[ind1];
+C51 COMPILER V9.60.7.0   MAIN                                                              11/18/2024 11:24:28 PAGE 2   
+
+  50   1        Prawy = Koder[ind2]; 
+  51   1      }
+  52          
+  53          void main(void)
+  54          {
+  55   1        init();
+  56   1        while(1){;}
+  57   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    148    ----
+   CONSTANT SIZE    =      4    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

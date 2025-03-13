@@ -1,0 +1,48 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              10/09/2024 11:24:22 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\main.lst) TA
+                    -BS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          // extern ... z innego pliku wait();
+   3          void wait(void)
+   4          {
+   5   1        unsigned char data x, y; // nie musze inicjowac, bo for inicjuje
+   6   1        for(x = 0; x < 120; x++)
+   7   1          for(y = 0; y < 120; y++){;} // kompilator optymalizujacy, nic ;
+   8   1      }
+   9          
+  10          void main(void)
+  11          {
+  12   1        while(1)
+  13   1        {
+  14   2          // dioda do portu zerowego i linii zerowej, zerowy bit portu P0
+  15   2          P0_0 = 1;
+  16   2          wait();
+  17   2          P0_0 = 0;
+  18   2          wait(); // trzeba spowolnic, zeby zmiany zobaczyc
+  19   2        }
+  20   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     25    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

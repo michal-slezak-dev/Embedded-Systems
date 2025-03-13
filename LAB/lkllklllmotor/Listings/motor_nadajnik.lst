@@ -1,0 +1,77 @@
+C51 COMPILER V9.60.7.0   MOTOR_NADAJNIK                                                    01/12/2025 12:02:48 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MOTOR_NADAJNIK
+OBJECT MODULE PLACED IN .\Objects\motor_nadajnik.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE motor_nadajnik.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\mo
+                    -tor_nadajnik.lst) TABS(2) OBJECT(.\Objects\motor_nadajnik.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #define Min 0
+   3          #define Max 0xFF
+   4          #define Motor P2_4
+   5          #define Lampka P2_3
+   6          unsigned char data Nastawa;
+   7          volatile unsigned char data Suwak;
+   8          
+   9          void Setup(void)
+  10          {
+  11   1        Motor = 0;
+  12   1        //P3_4 = 0;
+  13   1        P2_6 = 1;
+  14   1        Nastawa = 0x80;
+  15   1        Suwak = 0;
+  16   1        P2= 0xC5;
+  17   1        TMOD = 0x20;
+  18   1        TH1=TL1=0xF0;
+  19   1        ET1 = 1;
+  20   1        EA = 1;
+  21   1        TR1 = 1;
+  22   1      }
+  23          
+  24          void ISR_PWM(void) interrupt 3
+  25          {
+  26   1        Suwak++;
+  27   1        if(Nastawa > Min)
+  28   1         {
+  29   2           if(Nastawa == Max) {Motor = 1;Lampka = 1;} 
+  30   2           else
+  31   2            {
+  32   3              if(Suwak <= Nastawa) {Motor = 1;Lampka = 1;} else {Motor = 0;Lampka = 0;}
+  33   3            }
+  34   2         }
+  35   1        else
+  36   1         {
+  37   2           Motor = 0;
+  38   2           Lampka = 0;
+  39   2         } 
+  40   1        if(Suwak == Max) {Suwak = 0;}   
+  41   1      }
+  42          
+  43          void main()
+  44          {  
+  45   1        Setup();
+  46   1        while(1){;}
+  47   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     87    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   MOTOR_NADAJNIK                                                    01/12/2025 12:02:48 PAGE 2   
+
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

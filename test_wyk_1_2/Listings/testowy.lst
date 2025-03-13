@@ -1,0 +1,114 @@
+C51 COMPILER V9.60.7.0   TESTOWY                                                           11/04/2024 10:29:15 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TESTOWY
+OBJECT MODULE PLACED IN .\Objects\testowy.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE testowy.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\testowy.l
+                    -st) TABS(2) OBJECT(.\Objects\testowy.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #define Led_On P0_0 = 0
+   3          #define Led_Off P0_0 = 1
+   4          #define Jeden 0xE7
+   5          #define Gwiazdka 0x77
+   6          unsigned char code Tab[] = {0xEF, 0xDF, 0xBF, 0x7F}; // Wiersze klawiatury
+   7          unsigned char data indx;  // Zmienna indeksujaca wiersze
+   8          unsigned char bdata Key;  // Zmienna do przechowywania stanu kolumn
+   9          bit Enabled;
+  10          sbit Key_1 = Key^1;  // P2.1 - Kolumna 1
+  11          sbit Key_2 = Key^2;  // P2.2 - Kolumna 2
+  12          sbit Key_3 = Key^3;  // P2.3 - Kolumna 3 (przycisk 9 znajduje sie tutaj)
+  13          
+  14          sbit LED = P0^0;  // Dioda podlaczona do P0.0
+  15          
+  16          void Init(void)
+  17          { 
+  18   1        P3_4 = 0;
+  19   1        indx = 0;  // Ustawienie indeksu poczatkowego na 0
+  20   1        Enabled = 1;
+  21   1      }
+  22          
+  23          void wait(unsigned int time)  // Prosta funkcja opózniajaca
+  24          {
+  25   1          unsigned int x, y;
+  26   1          for(x = 0; x < time; x++)
+  27   1              for(y = 0; y < 127; y++) {;}  // Opóznienie
+  28   1      }
+  29          
+  30          /*void blinkLED(void)  // Funkcja zapalajaca diode 3 razy szybko
+  31          {
+  32              unsigned char i;
+  33              for(i = 0; i < 3; i++)  // Powtórzenie 3 razy
+  34              {
+  35                  P0_0 = 1;  // Zapalenie diody
+  36                  wait(100);  // Krótkie opóznienie (ok. 100 ms)
+  37                  P0_0 = 0;  // Zgaszenie diody
+  38                  wait(100);  // Krótkie opóznienie
+  39              }
+  40          }*/
+  41          
+  42          void main(void)
+  43          { 
+  44   1          //bit Enabled = 1;
+  45   1          Init();  // Inicjalizacja zmiennych
+  46   1      
+  47   1          while(1)
+  48   1          {
+  49   2              P2 = Tab[indx];  // Ustawienie wiersza
+  50   2              Key = P2;  // Odczyt stanu kolumn
+  51   2              //flaga jesli nie bylismy tam to wchodze ?
+  52   2              if((Key_1 && Key_2 && Key_3) == 0) // jesli przycisk wcisniety tak dlugo jak wcisniety to jak drugi ra
+             -z wchodze nie robie enabled zero jak nie bylem to enabled 1
+  53   2              {
+C51 COMPILER V9.60.7.0   TESTOWY                                                           11/04/2024 10:29:15 PAGE 2   
+
+  54   3                //P1=Key;
+  55   3                if(Enabled == 1)
+  56   3                {
+  57   4                  //if(Key==Jeden){Led_On;wait(40);Led_Off;Enabled = 0;} // P0_0 = 0, teraz mam migacza, ale tak nie m
+             -oze byc 
+  58   4                  if(Key==Jeden){Led_On;} // P0_0 = 0, teraz mam migacza, ale tak nie moze byc            
+  59   4                  if(Key==Gwiazdka){Led_Off;} //P0_0 = 1, jesli zostales wylaczony to wylacz
+  60   4                  Enabled = 0; // ten tutaj zapis odobry, jesli wczesniej mam cala obsulge klawiatury juz 
+  61   4                }
+  62   3              }else // jak przycisk puszczony
+  63   2              { 
+  64   3                Enabled = 1;
+  65   3                indx++;  // Zmieniamy wiersz
+  66   3                if(indx == 4) indx = 0;  // Powrót do pierwszego wiersza po czterech wierszach
+  67   3              }
+  68   2              // Sprawdzamy, czy wcisnieto przycisk 9 (wiersz 2, kolumna 3)
+  69   2              //if((indx == 2) && (Key_3 == 0))  // Wiersz 2 i Kolumna 3 odpowiadaja przyciskowi 9
+  70   2              //{
+  71   2                //  blinkLED();  // Zapal diode 3 razy szybko, jesli wcisnieto przycisk 9
+  72   2              //}else if(Key_3 == 1)
+  73   2              //{
+  74   2                //P0_0 = 0;
+  75   2              //}
+  76   2              //wait(10);  // Krótkie opóznienie dla stabilizacji sygnalu (debouncing)
+  77   2      
+  78   2          }
+  79   1      }
+  80          // DE transmitujace RE odbierajace ulad moze nadawac lub odbierac, ale na nadawanie ustawiony, bo data ena
+             -bled jest na 1 my chcemy, zeby zaczynaly od nasluchu a nie od nadawania, bo inaczej transmisja sie nie uda
+  81          // jak nsluch p34 na 0 wysterowac trzeba
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    112    ----
+   CONSTANT SIZE    =      4    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

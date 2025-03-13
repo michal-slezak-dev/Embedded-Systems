@@ -1,0 +1,6 @@
+".\Objects\main.obj",
+".\Objects\wait1.obj" 
+TO ".\Objects\klawiatura_projekt" 
+
+PRINT(".\Listings\klawiatura_projekt.map") CLASSES (CODE (C:0x0-C:0x1FFF), CONST (C:0x0-C:0x1FFF), 
+ECODE (C:0x0-C:0x1FFF), HCONST (C:0x0-C:0x1FFF)) 

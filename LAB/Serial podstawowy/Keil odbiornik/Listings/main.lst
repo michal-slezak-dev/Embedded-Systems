@@ -1,0 +1,51 @@
+C51 COMPILER V9.51   MAIN                                                                  11/22/2024 17:43:18 PAGE 1   
+
+
+C51 COMPILER V9.51, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c OMF2 BROWSE DEBUG PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Object
+                    -s\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          void Serial() interrupt 4
+   4          {
+   5   1        P1 = SBUF;
+   6   1        RI = 0;
+   7   1      }
+   8          
+   9          
+  10          main()
+  11          {
+  12   1        SCON = 0x50; // SM1 REN
+  13   1        TH2 = RCAP2H = 0xFF;
+  14   1        TL2 = RCAP2L = 0xDC;
+  15   1        T2CON = 0x34; // TR2 TCLK RCLK
+  16   1         
+  17   1        ES = 1;
+  18   1        EA = 1;
+  19   1        
+  20   1        while(1)
+  21   1         ;
+  22   1      }
+  23          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     33    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,156 @@
+C51 COMPILER V9.60.7.0   NADAJNIK                                                          01/11/2025 11:40:37 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE NADAJNIK
+OBJECT MODULE PLACED IN .\Objects\nadajnik.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE nadajnik.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\nadajnik
+                    -.lst) TABS(2) OBJECT(.\Objects\nadajnik.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          bit not_pressed_P2_5_2 = 1; // 5
+   4          bit sent = 0;
+   5          bit lastState = 0;
+   6          
+   7          void sendByte(unsigned char dta)
+   8          {
+   9   1          P3_4 = 1;
+  10   1          TI = 0;
+  11   1          SBUF = dta;
+  12   1          while(TI == 0)
+  13   1          {;}
+  14   1          TI = 0;
+  15   1          P3_4 = 0;
+  16   1      }
+  17          
+  18          void sleep()
+  19          {
+  20   1          int i,j;
+  21   1          for(i = 0; i < 70; i++)
+  22   1          {
+  23   2              for(j = 0; j < 70; j++)
+  24   2              {
+  25   3                  /* nic */;
+  26   3              }
+  27   2          }
+  28   1      }
+  29          
+  30          void Init(void)
+  31          {
+  32   1        P3_4 = 0;
+  33   1        SCON = 0x50;
+  34   1        T2CON = 0x30;
+  35   1        TH2 = RCAP2H = 0xFF;
+  36   1        TL2 = RCAP2L = 0xDC;
+  37   1        TR2=1;
+  38   1      }
+  39          
+  40          void main()
+  41          {   
+  42   1          //sleep_5sec();
+  43   1          Init();
+  44   1      
+  45   1          // Na starcie wszystkie kolumny na 0
+  46   1          P2_1 = 0;
+  47   1          P2_2 = 0;
+  48   1          P2_3 = 0;
+  49   1          
+  50   1          while(1)
+  51   1          {
+  52   2            
+  53   2              // KOLUMNA 1
+  54   2              P2_1 = 1; 
+C51 COMPILER V9.60.7.0   NADAJNIK                                                          01/11/2025 11:40:37 PAGE 2   
+
+  55   2              P2_2 = 1; 
+  56   2              P2_3 = 0;
+  57   2      
+  58   2              // KLAWISZ 7 -> P2_6
+  59   2              
+  60   2      
+  61   2              // KLAWISZ * -> P2_7 (zatwierdzanie PINu)
+  62   2              
+  63   2            
+  64   2              // KLAWISZ 1 -> P2_4
+  65   2              
+  66   2              
+  67   2              // KLAWISZ 4 -> P2_5
+  68   2              
+  69   2              
+  70   2      
+  71   2              // KOLUMNA 2
+  72   2              P2_1 = 1; 
+  73   2              P2_2 = 0; 
+  74   2              P2_3 = 1;
+  75   2      
+  76   2              // KLAWISZ 5 -> P2_5
+  77   2              if(not_pressed_P2_5_2 && !P2_5)
+  78   2              {
+  79   3                  sleep();
+  80   3                  P0_0 = !P0_0;
+  81   3              }
+  82   2              not_pressed_P2_5_2 = P2_5;
+  83   2              
+  84   2              if(P0_0 != lastState)
+  85   2              {
+  86   3                if(P0_0 && !sent)
+  87   3                {
+  88   4                  sleep();
+  89   4                  sendByte('0');
+  90   4                  sent = 1;
+  91   4                }else if (!P0_0 && !sent)
+  92   3                {
+  93   4                  sleep();
+  94   4                  sendByte('1');
+  95   4                  sent = 1;
+  96   4                }
+  97   3      
+  98   3              }else
+  99   2              {
+ 100   3                sent = 0;
+ 101   3              }
+ 102   2      
+ 103   2              // KLAWISZ 8 -> P2_6
+ 104   2             
+ 105   2      
+ 106   2              // KLAWISZ 0 -> P2_7
+ 107   2              
+ 108   2              // KLAWISZ 2 -> P2_4
+ 109   2              
+ 110   2              // KOLUMNA 3
+ 111   2              P2_1 = 0; 
+ 112   2              P2_2 = 1; 
+ 113   2              P2_3 = 1;
+ 114   2              
+ 115   2              // KLAWISZ 3 -> P2_4
+ 116   2             
+C51 COMPILER V9.60.7.0   NADAJNIK                                                          01/11/2025 11:40:37 PAGE 3   
+
+ 117   2              
+ 118   2              // KLAWISZ 9 -> P2_6
+ 119   2             
+ 120   2              // KLAWISZ # -> P2_7
+ 121   2             
+ 122   2              lastState = P0_0;
+ 123   2          }
+ 124   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    155    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

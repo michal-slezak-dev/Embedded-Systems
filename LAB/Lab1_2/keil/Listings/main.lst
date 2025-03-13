@@ -1,0 +1,479 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\main.lst) TA
+                    -BS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          int released_P2_4_1 = 0;
+   3          int released_P2_6_2 = 0;
+   4          int released_P2_7_2 = 0;
+   5          int not_pressed_P2_6_1 = 1; // 1 - nie wcisniety
+   6          int not_pressed_P2_4_2 = 1;
+   7          int not_pressed_P2_5_2 = 1;
+   8          int not_pressed_P2_6_3 = 1;
+   9          unsigned char data press_counter_P2_4_2 = 0;
+  10          unsigned char data press_counter_P2_5_2 = 0;
+  11          unsigned char data release_counter_P2_6_2 = 0;
+  12          unsigned char data release_counter_P2_7_2 = 0;
+  13          unsigned char data double_release_counter = 0;
+  14          unsigned char data double_press_counter = 0;
+  15          
+  16          void sleep()
+  17          {
+  18   1        int i, j;
+  19   1        for(i = 0; i < 70; i++)
+  20   1        {
+  21   2          for(j = 0; j < 70; j++){;}
+  22   2        }
+  23   1      }
+  24          
+  25          void block_5sec(){
+  26   1        int x, y;
+  27   1        for(x = 0; x < 300; x++){
+  28   2          for(y = 0; y < 300; y++){
+  29   3          }
+  30   2        }
+  31   1      }
+  32          
+  33          void sleep_double_click()
+  34          {
+  35   1        int i, j;
+  36   1        for(i = 0; i < 70; i++)
+  37   1        {
+  38   2          for(j = 0; j < 70; j++){;}
+  39   2        }
+  40   1      }
+  41          
+  42          void main()
+  43          {
+  44   1        int hold_time = 0;
+  45   1        int blocked = 0;
+  46   1        int blocked_seq = 0;
+  47   1        int activation_counter = 0;
+  48   1        int correct_sequence1 = 0;
+  49   1        int correct_sequence2 = 0;
+  50   1        int func_turned_off = 0;
+  51   1        //P1 = 255 - 2; // tylko P1_1? od maxa - 2, zamienia dziesietna na bitowa i zrzuca na caly port
+  52   1        // odczytanie wartosci z portu
+  53   1        //int a = P1;
+  54   1        
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 2   
+
+  55   1        // kolumny na 0
+  56   1        P2_1 = 0;
+  57   1        P2_2 = 0;
+  58   1        P2_3 = 0; // 1 - na p2_4 kliknalem jedynke
+  59   1        
+  60   1        while(1)
+  61   1          {
+  62   2            if(blocked == 0 && blocked_seq == 0)
+  63   2            {
+  64   3              P2_1 = 1; // na poczatek 1. kolumna
+  65   3              P2_2 = 1;
+  66   3              P2_3 = 0;
+  67   3      
+  68   3              
+  69   3              // puszczenie gasi diode
+  70   3              /*if(P2_4 == 0)
+  71   3              {
+  72   3                while(1)
+  73   3                {
+  74   3                  if(P2_4 == 1)
+  75   3                  {
+  76   3                    break;
+  77   3                  }
+  78   3                }
+  79   3                sleep();
+  80   3                P0_0 = 1;
+  81   3              }*/
+  82   3              if(!P2_4)
+  83   3              {
+  84   4                released_P2_4_1 = 1;
+  85   4              }
+  86   3              
+  87   3              if(released_P2_4_1 && P2_4)
+  88   3              {
+  89   4                P0_0 = 1;
+  90   4                released_P2_4_1 = 0;
+  91   4              }
+  92   3              
+  93   3              // przytrzymanie zapala diode
+  94   3              if(!P2_5)
+  95   3              {
+  96   4                P0_0 = 0;
+  97   4              }/*else
+  98   3              {
+  99   3                P0_0 = 1;
+ 100   3              }*/
+ 101   3              
+ 102   3              //wcisniecie zmienia stan diody
+ 103   3              if(not_pressed_P2_6_1 && !P2_6)
+ 104   3              {
+ 105   4                if(func_turned_off == 0)
+ 106   4                {
+ 107   5                  if(P0_0 == 1)
+ 108   5                  {
+ 109   6                    P0_0 = 0;
+ 110   6                  }else
+ 111   5                  {
+ 112   6                    P0_0 = 1;
+ 113   6                  }
+ 114   5                }
+ 115   4                }
+ 116   3              not_pressed_P2_6_1 = P2_6;
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 3   
+
+ 117   3              
+ 118   3              // wcisniecie wylacza funkcje 2
+ 119   3              if(P2_7 == 0)
+ 120   3              {
+ 121   4                sleep();
+ 122   4                func_turned_off = 1;
+ 123   4              }
+ 124   3      
+ 125   3              
+ 126   3              P2_1 = 1; // 2. kolumna
+ 127   3              P2_2 = 0;
+ 128   3              P2_3 = 1;
+ 129   3              
+ 130   3              //co drugie wcisniecie zapalenie, zgaszenie diody
+ 131   3              if(not_pressed_P2_4_2 && !P2_4)
+ 132   3              {
+ 133   4                press_counter_P2_4_2++;
+ 134   4                if(press_counter_P2_4_2 != 0 && press_counter_P2_4_2 % 2 == 0)
+ 135   4                {
+ 136   5                  sleep();
+ 137   5                  P0_0 = 0;
+ 138   5                  sleep();
+ 139   5                  P0_0 = 1;
+ 140   5                }
+ 141   4              }
+ 142   3              not_pressed_P2_4_2 = P2_4;
+ 143   3              
+ 144   3              //co trzecie wcisniecie zapalenie, zgaszenie, zapalenie, zgaszenie diody
+ 145   3              if(not_pressed_P2_5_2 && !P2_5)
+ 146   3              {
+ 147   4                press_counter_P2_5_2++;
+ 148   4                if(press_counter_P2_5_2 != 0 && press_counter_P2_5_2 % 3 == 0)
+ 149   4                {
+ 150   5                  sleep();
+ 151   5                  P0_0 = 0;
+ 152   5                  sleep();
+ 153   5                  P0_0 = 1;
+ 154   5                  sleep();
+ 155   5                  P0_0 = 0;
+ 156   5                  sleep();
+ 157   5                  P0_0 = 1;
+ 158   5                }
+ 159   4              }
+ 160   3              not_pressed_P2_5_2 = P2_5;
+ 161   3              
+ 162   3              // co drugie puszczenie blokuje klawiature
+ 163   3              if(!P2_6)
+ 164   3              {
+ 165   4                released_P2_6_2 = 1;
+ 166   4              }
+ 167   3              
+ 168   3              if(released_P2_6_2 && P2_6)
+ 169   3              {
+ 170   4                release_counter_P2_6_2++;
+ 171   4                
+ 172   4                if(release_counter_P2_6_2 != 0 && release_counter_P2_6_2 % 2 == 0)
+ 173   4                {
+ 174   5                  sleep();
+ 175   5                  blocked = 1;
+ 176   5                }
+ 177   4                released_P2_6_2 = 0;
+ 178   4              }
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 4   
+
+ 179   3              
+ 180   3              // co trzecie puszczenie
+ 181   3              if(!P2_7)
+ 182   3              {
+ 183   4                released_P2_7_2 = 1;
+ 184   4              }
+ 185   3              
+ 186   3              if(released_P2_7_2 && P2_7)
+ 187   3              {
+ 188   4                //release_counter_P2_7_2++;
+ 189   4                release_counter_P2_7_2 = (release_counter_P2_7_2 + 1) % 3;
+ 190   4                //if(release_counter_P2_7_2 != 0 && release_counter_P2_7_2 % 3 == 0)
+ 191   4                if(release_counter_P2_7_2 == 0)
+ 192   4                {
+ 193   5                  P1 = 0;
+ 194   5                }
+ 195   4                released_P2_7_2 = 0;
+ 196   4              }
+ 197   3              
+ 198   3      
+ 199   3              
+ 200   3              P2_1 = 0; // 3. koluumna
+ 201   3              P2_2 = 1;
+ 202   3              P2_3 = 1;
+ 203   3              
+ 204   3              //przytrzymanie na ok. 3 sekundy blokuje na ok. 5s klawe
+ 205   3              if(P2_4 == 0)
+ 206   3              {
+ 207   4                sleep();
+ 208   4                while(P2_4 == 0)
+ 209   4                {
+ 210   5                  sleep();
+ 211   5                  hold_time++;
+ 212   5                  if(hold_time > 3)
+ 213   5                  { 
+ 214   6                    block_5sec();
+ 215   6                    hold_time = 0;
+ 216   6                    break;
+ 217   6                  }
+ 218   5                }
+ 219   4              }
+ 220   3              
+ 221   3              // podwojne puszczenie nastepuje aktywacja przycisku
+ 222   3              if(P2_5 == 0)
+ 223   3              {
+ 224   4                sleep();
+ 225   4                if(P2_5 == 1)
+ 226   4                {
+ 227   5                  sleep();
+ 228   5                  double_release_counter++;
+ 229   5                  if(P2_5 == 0)
+ 230   5                  {
+ 231   6                    sleep();
+ 232   6                    if(P2_5 == 1)
+ 233   6                    {
+ 234   7                      sleep();
+ 235   7                      double_release_counter++;
+ 236   7                    }
+ 237   6                  }
+ 238   5                  if(double_release_counter == 2)
+ 239   5                  {
+ 240   6                    sleep();
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 5   
+
+ 241   6                    activation_counter++;
+ 242   6                    if(activation_counter % 3 == 0)
+ 243   6                    {
+ 244   7                      sleep();
+ 245   7                      P0_0 = 0;
+ 246   7                    }else if(activation_counter % 3 == 1)
+ 247   6                    {
+ 248   7                      sleep();
+ 249   7                      P0_0 = 1;
+ 250   7                    }else if(activation_counter % 3 == 2)
+ 251   6                    {
+ 252   7                      sleep();
+ 253   7                      P0_0 = 0;
+ 254   7                      sleep();
+ 255   7                      P0_0 = 1;
+ 256   7                    }
+ 257   6                  }
+ 258   5                }
+ 259   4                double_release_counter = 0; // zerujemy na koniec
+ 260   4              }
+ 261   3              
+ 262   3              //podwojne wcisniecie blokuje klawiature z sekwencja do odblokowania
+ 263   3              if(not_pressed_P2_6_3 && !P2_6)
+ 264   3              {
+ 265   4                sleep_double_click();
+ 266   4                if(!not_pressed_P2_6_3 || P2_6)
+ 267   4                {
+ 268   5                  sleep_double_click();
+ 269   5                  double_press_counter++;
+ 270   5                  if(not_pressed_P2_6_3 && !P2_6)
+ 271   5                  {
+ 272   6                    sleep_double_click();
+ 273   6                    if(!not_pressed_P2_6_3 || P2_6)
+ 274   6                    {
+ 275   7                      sleep_double_click();
+ 276   7                      double_press_counter++;
+ 277   7                    }
+ 278   6                  }
+ 279   5                }
+ 280   4                if(double_press_counter == 2)
+ 281   4                {
+ 282   5                  blocked_seq = 1;
+ 283   5                  /*sleep();
+ 284   5                  P0_0 = 0;
+ 285   5                  sleep();
+ 286   5                  P0_0 = 1;
+ 287   5                  sleep();
+ 288   5                  P0_0 = 0;
+ 289   5                  sleep();
+ 290   5                  P0_0 = 1;*/
+ 291   5                }
+ 292   4                double_press_counter = 0;
+ 293   4              }
+ 294   3              not_pressed_P2_6_3 = P2_6;
+ 295   3            }else if(blocked == 1)
+ 296   2            {
+ 297   3              //kolumna 1
+ 298   3              P2_1 = 1;
+ 299   3              P2_2 = 1;
+ 300   3              P2_3 = 0;
+ 301   3              
+ 302   3              
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 6   
+
+ 303   3              //kolumna 2
+ 304   3              P2_1 = 1;
+ 305   3              P2_2 = 0;
+ 306   3              P2_3 = 1;
+ 307   3              
+ 308   3              // co trzecie puszczenie odblokowuje klawiature
+ 309   3              if(!P2_7)
+ 310   3              {
+ 311   4                released_P2_7_2 = 1;
+ 312   4              }
+ 313   3              
+ 314   3              if(released_P2_7_2 && P2_7)
+ 315   3              {
+ 316   4                //release_counter_P2_7_2++;
+ 317   4                release_counter_P2_7_2 = (release_counter_P2_7_2 + 1) % 3;
+ 318   4                //if(release_counter_P2_7_2 != 0 && release_counter_P2_7_2 % 3 == 0)
+ 319   4                if(release_counter_P2_7_2 == 0)
+ 320   4                {
+ 321   5                  blocked = 0;
+ 322   5                }
+ 323   4                released_P2_7_2 = 0;
+ 324   4              }
+ 325   3              
+ 326   3              //kolumna 3
+ 327   3              P2_1 = 0;
+ 328   3              P2_2 = 1;
+ 329   3              P2_3 = 1;
+ 330   3            }else if(blocked_seq == 1) // odblokowanie 6 2 *
+ 331   2            {
+ 332   3              //kolumna 1
+ 333   3              P2_1 = 1;
+ 334   3              P2_2 = 1;
+ 335   3              P2_3 = 0;
+ 336   3              
+ 337   3              if(P2_4 == 0){
+ 338   4                sleep();
+ 339   4                correct_sequence1 = 0;
+ 340   4                correct_sequence2 = 0;
+ 341   4            }
+ 342   3            
+ 343   3            if(P2_5 == 0){
+ 344   4              sleep();
+ 345   4              correct_sequence1 = 0;
+ 346   4              correct_sequence2 = 0;
+ 347   4            }
+ 348   3            
+ 349   3            if(P2_6 == 0){
+ 350   4              sleep();
+ 351   4              correct_sequence1 = 0;
+ 352   4              correct_sequence2 = 0;
+ 353   4            }
+ 354   3            
+ 355   3            //trzeci Z RZEDU poprawny, bo * w 1 kolumnie jest
+ 356   3            if(P2_7 == 0){
+ 357   4              sleep();
+ 358   4              if(correct_sequence1 == 1){
+ 359   5                if(correct_sequence2 == 1){
+ 360   6                  blocked_seq = 0;
+ 361   6                  correct_sequence1 = 0;
+ 362   6                  correct_sequence2 = 0;
+ 363   6                }else{
+ 364   6                  correct_sequence1 = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 7   
+
+ 365   6                  correct_sequence2 = 0;
+ 366   6                }
+ 367   5              }
+ 368   4            }     
+ 369   3              
+ 370   3              //kolumna 2
+ 371   3              P2_1 = 1;
+ 372   3              P2_2 = 0;
+ 373   3              P2_3 = 1;
+ 374   3            
+ 375   3              //drugi poprawny, bo 2 w 2. kolumnie
+ 376   3              if(P2_4 == 0){
+ 377   4                sleep();
+ 378   4                if(correct_sequence1 == 1){ // 6 wcisniete juz sprawdzamy
+ 379   5                  correct_sequence2 = 1;
+ 380   5                }else{
+ 381   5                  //nacisniety byl kolejny przycisk zatem wtedy on staje sie pierwszym (a nie jest pierwszym do odblok
+             -owania)
+ 382   5                  correct_sequence1 = 0;
+ 383   5                }
+ 384   4              }
+ 385   3              
+ 386   3              if(P2_5 == 0){
+ 387   4                sleep();
+ 388   4                correct_sequence1 = 0;
+ 389   4                correct_sequence2 = 0;
+ 390   4              }
+ 391   3              
+ 392   3              if(P2_6 == 0){
+ 393   4                sleep();
+ 394   4                correct_sequence1 = 0;
+ 395   4                correct_sequence2 = 0;
+ 396   4              }
+ 397   3              
+ 398   3              if(P2_7 == 0){
+ 399   4                sleep();
+ 400   4                correct_sequence1 = 0;
+ 401   4                correct_sequence2 = 0;
+ 402   4              }
+ 403   3      
+ 404   3              
+ 405   3              //kolumna 3
+ 406   3              P2_1 = 0;
+ 407   3              P2_2 = 1;
+ 408   3              P2_3 = 1;
+ 409   3              
+ 410   3              if(P2_4 == 0){
+ 411   4                sleep();
+ 412   4                correct_sequence1 = 0;
+ 413   4                correct_sequence2 = 0;
+ 414   4              }
+ 415   3            
+ 416   3              //pierwszy poprawny, bo 6 w 3. kolumnie
+ 417   3              if(P2_5 == 0){
+ 418   4                sleep();
+ 419   4                correct_sequence1 = 1;
+ 420   4              }
+ 421   3              
+ 422   3              if(P2_6 == 0){
+ 423   4                sleep();
+ 424   4                correct_sequence1 = 0;
+ 425   4                correct_sequence2 = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              11/08/2024 14:43:38 PAGE 8   
+
+ 426   4              }
+ 427   3              
+ 428   3              if(P2_7 == 0){
+ 429   4                sleep();
+ 430   4                correct_sequence1 = 0;
+ 431   4                correct_sequence2 = 0;
+ 432   4              }
+ 433   3      
+ 434   3            }
+ 435   2          }
+ 436   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    921    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     20      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

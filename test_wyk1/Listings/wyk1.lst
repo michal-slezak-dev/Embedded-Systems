@@ -1,0 +1,84 @@
+C51 COMPILER V9.60.7.0   WYK1                                                              10/24/2024 20:45:26 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE WYK1
+OBJECT MODULE PLACED IN .\Objects\wyk1.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE wyk1.c OMF2 OPTIMIZE(8,SPEED) BROWSE DEBUG PRINT(.\Listings\wyk1.lst) TA
+                    -BS(2) OBJECT(.\Objects\wyk1.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          // wwwwkkk1
+   4          //11101 jesli k 0, musze wygen 1
+   5          // 11101111 -> 0xEF
+   6          // 11011111 -> 0xDF 
+   7          // 1011111 -> 0xBf
+   8          // 01111111 -> 0x7F
+   9          unsigned char code Tab[] = {0xEF, 0xDF, 0xBF, 0x7F}; // nie beda sie zmieniac, zapisana w pam kodu, progra
+             -mu, 
+  10          unsigned char data indx; // inicjaizacja tutaj to zmienne gotowe musza byc, kompilator wlasny kod dorzuca,
+             - data nie chce do bitow sie dostac
+  11          unsigned char bdata Key;  // zbuforowac trzeba w ifie wcisniecia, pamiec adresowana bajtowo i bitowo, chce
+             -my sie do bitow dostac zmiennej
+  12          // P2_1 P2_2 P2_3
+  13          sbit Key_1 = Key^1; // 1. bit
+  14          sbit Key_2 = Key^2;
+  15          sbit Key_3 = Key^3;
+  16          
+  17          void Init(void)
+  18          {
+  19   1        indx = 0;
+  20   1      }
+  21          
+  22          /*void wait(void)
+  23          {
+  24            unsigned char data x, y;
+  25            for(x = 0; x < 80; x++)
+  26              for(y = 0; y < 80; y++){;}
+  27          }*/
+  28          
+  29          void main(void)
+  30          {//P2.1-3 kol P2.4-7 wiersze
+  31   1        Init();
+  32   1        while(1)
+  33   1        {
+  34   2          P2 = Tab[indx];
+  35   2          Key = P2; // tylko tu uzytkownik ma prawo cos powiedziec, bo uzytkownik potem do decyzji nie ma dostepu 
+             -juz
+  36   2          
+  37   2          if((Key_1 && Key_2 && Key_3) == 0) // PRZYCISK WCISNIETY, w oparciu o swoja zmienna KEY, jesli ktorekolw
+             -iek o 0
+  38   2          {
+  39   3            P1 = Key; // od dolu zero moje, a gora to to co wyszlo , teraz wiemy, w zal od P1 cos robimy
+  40   3          }
+  41   2          //wait();
+  42   2          indx++;
+  43   2          
+  44   2          if(indx == 4)
+  45   2          {
+  46   3            indx = 0;
+  47   3          }
+  48   2        }
+  49   1      }
+C51 COMPILER V9.60.7.0   WYK1                                                              10/24/2024 20:45:26 PAGE 2   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     56    ----
+   CONSTANT SIZE    =      4    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
